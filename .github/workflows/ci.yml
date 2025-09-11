@@ -1,0 +1,48 @@
+# GitHub Actions pipeline for the node_pro repository
+name: CI/CD Pipeline for Node.js
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    # Specify the environment for the job
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout Code
+      - name: Checkout Code
+        # Fetch the repository code
+        uses: actions/checkout@v2
+
+      # Step 2: Setup Node.js
+      - name: Setup Node.js
+        # Configure Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      # Step 3: Install Dependencies
+      - name: Install Dependencies
+        # Install project dependencies
+        run: npm install
+
+      # Step 4: Run Linting
+      - name: Run Linting
+        # Perform code linting
+        run: npm run lint
+
+      # Step 5: Run Unit Tests
+      - name: Run Unit Tests
+        # Execute unit tests using Jest
+        run: npm test
+
+      # Step 6: Run Integration Tests
+      - name: Run Integration Tests
+        # Execute integration tests
+        run: npm run test:integration
