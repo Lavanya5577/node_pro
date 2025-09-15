@@ -1,55 +1,45 @@
 pipeline {
     agent any
 
-    environment {
-        NODE_VERSION = '16'
+    tools {
+        // This must match the NodeJS installation name you configure in Jenkins
+        nodejs "Node16"
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
-                // Clone the repository
-                git url: 'https://github.com/Lavanya5577/node_pro.git', branch: 'main'
-            }
-        }
-
-        stage('Setup Node.js') {
-            steps {
-                // Install Node.js
-                sh '''
-                curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | sudo -E bash -
-                sudo apt-get install -y nodejs
-                node -v
-                npm -v
-                '''
+                // Checkout from main branch of your repo
+                git branch: 'main',
+                    url: 'https://github.com/Lavanya5577/node_pro.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                // Install npm dependencies
+                // Install project dependencies from package.json
                 sh 'npm install'
-            }
-        }
-
-        stage('Build and Start Application') {
-            steps {
-                // Verify application starts successfully
-                sh 'npm run start'
             }
         }
 
         stage('Run Tests') {
             steps {
-                // Execute unit and integration tests
+                // Run tests defined in package.json (Jest or other framework)
                 sh 'npm test'
+            }
+        }
+
+        stage('Archive Test Results') {
+            steps {
+                // Archive test results if generated (e.g., by Jest reporters)
+                junit '**/test-results.xml'
             }
         }
     }
 
     post {
         always {
-            // Clean up workspace
+            echo "Pipeline completed. Cleaning up workspace."
             cleanWs()
         }
     }
