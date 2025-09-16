@@ -1,8 +1,8 @@
 pipeline {
     agent {
         docker {
-            image 'node:16'   // Official Node.js 16 image from Docker Hub
-            args '-p 3000:3000'  // Expose port if your app runs on 3000
+            image 'node:16'
+            args '-u root:root -p 3000:3000'
         }
     }
 
@@ -15,7 +15,8 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                sh 'npm config set cache $(pwd)/.npm --global'
+                sh 'npm install --unsafe-perm=true'
             }
         }
 
